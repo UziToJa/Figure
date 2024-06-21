@@ -1,117 +1,98 @@
 #include <iostream>
-#include "class.h"
-using namespace std;
-void menu(){
-    cout<<" 1 - Triangle"<< endl;
-    cout<<" 2 - Rectangle "<< endl;
-    cout<<" 3 - Circle "<< endl;
-    cout<<" 4 - Stop Program "<< endl;
-}
-int main() {
-    double x;
-    double y;
-    double a;
-    double b;
-    char textt[10] = " ";
-    char text[10] = " ";
-    int c = 0;
-    while(c!=4){
-        menu();
-        cout<<"Eneter your choice";
-        cin >> c;
-        if(c==1){
-            cout<<"First"<<endl;
-            triangle(&x,&y);
-            cout << endl;
-            name(text);
-            cout<<"Second"<<endl;
-            triangle(&a,&b);
-            cout << endl;
-            name(textt);
-            Triangle t1(text ,x,y);
-            Triangle t2(textt ,a,b);
-            if(x!= 0 && y!= 0 && a!= 0 && b!=0){
-                cout<<"There is "<< Triangle::numberFigury()<< " Figure "<< endl;
-                t1.name();
-                t1.showSides();
-                cout << "Perimeter of the triangle = " << t1.perimeter() << endl;
-                cout << "Area of the triangle = " << t1.area() << endl;
-                t2.name();
-                t2.showSides();
-                cout << "Perimeter of the triangle = " << t2.perimeter() << endl;
-                cout << "Area of the triangle = " << t2.area() << endl;
+#include <cmath> // Dla stałej M_PI
 
-            }
-            else{
-                cout<<"Sides can not be 0"<<endl;
-            }
-        }
-        else if(c == 2){
-            cout<<"First"<<endl;
-            rectangle(&x,&y);
-            cout << endl;
-            name(text);
-            cout<<"Second"<<endl;
-            rectangle(&a,&b);
-            cout << endl;
-            name(textt);
-            Rectangle r1(text,x,y);
-            Rectangle r2(textt,a,b);
-            if(x!= 0 && y!= 0  && a!= 0 && b!=0 ){
-                cout<<"There is "<< Rectangle::numberFigury()<< " Figure "<< endl;
-                r1.name();
-                r1.showSides();
-                cout << "Perimeter of the Rectangle = " << r1.perimeter() << endl;
-                cout << "Area of the rectangle = " << r1.area() << endl;
-                r2.name();
-                r2.showSides();
-                cout << "Perimeter of the Rectangle = " << r2.perimeter() << endl;
-                cout << "Area of the rectangle = " << r2.area() << endl;
-                const Rectangle& r = r1.bigger(r2);
-                cout<< "The biggest is "<< endl;
-                r.name();
-                cout << endl;}
-            else{
-                cout<<"Sides can not be 0"<<endl;
-            }
-        }
-        else if ( c == 3){
-            cout<<"First"<<endl;
-            circle(&x);
-            cout << endl;
-            name(text);
-            cout<<"First"<<endl;
-            circle(&y);
-            cout << endl;
-            name(textt);
-            Circle c2( textt,y);
-            Circle c1( text,x);
-            if(x!= 0 && y!=0){
-                cout<<"There is "<< Circle::numberFigury()<< " Figure "<< endl;
-                c1.name();
-                c1.showCircle();
-                cout << "Perimeter of the Circle = " << c1.perimeter() << endl;
-                cout << "Area of the rectangle = " << c1.area() << endl;
-                cout << endl;
-                c2.name();
-                c2.showCircle();
-                cout << "Perimeter of the Circle = " << c2.perimeter() << endl;
-                cout << "Area of the rectangle = " << c2.area() << endl;
-                const Circle& c = c1.bigger(c2);
-                cout<< "The biggest is "<< endl;
-                c.name();
-            }
-            else{
-                cout<<"Radius can not be 0"<< endl;
-            }
-        }
-        else if ( c == 4 )
-        {
-            break;
-        }
-        else {
-            cout<<"Wrong Choice"<< endl;
-        }
+// Abstrakcyjna klasa Figure
+class Figure {
+public:
+    // Czysta wirtualna metoda area()
+    virtual double area() const = 0;
+
+    // Czysta wirtualna metoda show()
+    virtual void show() const = 0;
+
+    // Wirtualny destruktor
+    virtual ~Figure() = default;
+};
+
+// Klasa Circle dziedzicząca po Figure
+class Circle : public Figure {
+private:
+    double radius;
+
+public:
+    Circle(double r) : radius(r) {}
+
+    // Implementacja metody area()
+    double area() const override {
+        return M_PI * radius * radius;
     }
+
+    // Implementacja metody show()
+    void show() const override {
+        std::cout << "Circle with radius: " << radius << " and area: " << area() << std::endl;
+    }
+};
+
+// Klasa Rectangle dziedzicząca po Figure
+class Rectangle : public Figure {
+private:
+    double width, height;
+
+public:
+    Rectangle(double w, double h) : width(w), height(h) {}
+
+    // Implementacja metody area()
+    double area() const override {
+        return width * height;
+    }
+
+    // Implementacja metody show()
+    void show() const override {
+        std::cout << "Rectangle with width: " << width << ", height: " << height << " and area: " << area()
+                  << std::endl;
+    }
+};
+
+// Klasa Triangle dziedzicząca po Figure
+class Triangle : public Figure {
+private:
+    double base, height;
+
+public:
+    Triangle(double b, double h) : base(b), height(h) {}
+
+    // Implementacja metody area()
+    double area() const override {
+        return base * height * 0.5;
+    }
+
+    // Implementacja metody show()
+    void show() const override {
+        std::cout << "Triangle with width: " << base << ", height: " << height << " and area: " << area()
+                  << std::endl;
+    }
+};
+
+int main() {
+    // Tablica wskaźników na obiekty klasy Figure
+    Figure *figures[5];
+
+    // Tworzenie obiektów i przypisywanie wskaźników do tablicy
+    figures[0] = new Circle(5.0);
+    figures[1] = new Rectangle(4.0, 6.0);
+    figures[2] = new Circle(3.0);
+    figures[3] = new Rectangle(2.5, 5.5);
+    figures[4] = new Triangle(2, 5);
+
+    // Iteracja przez tablicę i wyświetlanie informacji o obiektach
+    for (int i = 0; i < 5; ++i) {
+        figures[i]->show();
+    }
+
+    // Zwolnienie pamięci
+    for (int i = 0; i < 5; ++i) {
+        delete figures[i];
+    }
+
     return 0;
 }
